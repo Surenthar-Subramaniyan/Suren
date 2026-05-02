@@ -3437,52 +3437,52 @@
           </div>
         </div>
         <div class="reveal-right">
-          <form class="contact-form" id="contactForm" novalidate>
-            <div class="form-row">
-              <div class="form-group" id="nameGroup">
-                <label for="name">Full Name *</label>
-                <input type="text" id="name" placeholder="Your name">
-                <span class="form-error">Please enter your name.</span>
-              </div>
-              <div class="form-group" id="emailGroup">
-                <label for="email">Email Address *</label>
-                <input type="email" id="email" placeholder="your@email.com">
-                <span class="form-error">Please enter a valid email.</span>
-              </div>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="tel" id="phone" placeholder="+91 xxxxx xxxxx">
-              </div>
-              <div class="form-group" id="serviceGroup">
-                <label for="service">Service Required *</label>
-                <select id="service">
-                  <option value="">Select a service…</option>
-                  <option>WordPress Development</option>
-                  <option>Shopify Store</option>
-                  <option>WooCommerce Store</option>
-                  <option>Wix Website</option>
-                  <option>Apps Development</option>
-                  <option>SEO Optimisation</option>
-                  <option>Performance Audit</option>
-                  <option>Other</option>
-                </select>
-                <span class="form-error">Please select a service.</span>
-              </div>
-            </div>
-            <div class="form-group" id="msgGroup">
-              <label for="message">Your Message *</label>
-              <textarea id="message" placeholder="Tell me about your project…"></textarea>
-              <span class="form-error">Please enter your message.</span>
-            </div>
-            <div class="form-success" id="formSuccess">
-              <i class="fas fa-check-circle"></i> Thank you! I'll get back to you within 24 hours.
-            </div>
-            <button type="submit" class="btn-submit" id="submitBtn">
-              <i class="fas fa-paper-plane"></i> Send Message
-            </button>
-          </form>
+<form class="contact-form" id="contactForm" action="send-mail.php" method="POST" novalidate>
+  <div class="form-row">
+    <div class="form-group" id="nameGroup">
+      <label for="name">Full Name *</label>
+      <input type="text" id="name" name="name" placeholder="Your name" required>
+      <span class="form-error">Please enter your name.</span>
+    </div>
+    <div class="form-group" id="emailGroup">
+      <label for="email">Email Address *</label>
+      <input type="email" id="email" name="email" placeholder="your@email.com" required>
+      <span class="form-error">Please enter a valid email.</span>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" placeholder="+91 xxxxx xxxxx">
+    </div>
+    <div class="form-group" id="serviceGroup">
+      <label for="service">Service Required *</label>
+      <select id="service" name="service" required>
+        <option value="">Select a service…</option>
+        <option>WordPress Development</option>
+        <option>Shopify Store</option>
+        <option>WooCommerce Store</option>
+        <option>Wix Website</option>
+        <option>Apps Development</option>
+        <option>SEO Optimisation</option>
+        <option>Performance Audit</option>
+        <option>Other</option>
+      </select>
+      <span class="form-error">Please select a service.</span>
+    </div>
+  </div>
+
+  <div class="form-group" id="msgGroup">
+    <label for="message">Your Message *</label>
+    <textarea id="message" name="message" placeholder="Tell me about your project…" required></textarea>
+    <span class="form-error">Please enter your message.</span>
+  </div>
+
+  <button type="submit" class="btn-submit" id="submitBtn">
+    <i class="fas fa-paper-plane"></i> Send Message
+  </button>
+</form>
         </div>
       </div>
     </div>
@@ -3868,6 +3868,45 @@ s0.parentNode.insertBefore(s1,s0);
 })();
 </script>
 <!--End of Tawk.to Script-->
+
+          <?php
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    $name    = htmlspecialchars($_POST['name']);
+    $email   = htmlspecialchars($_POST['email']);
+    $phone   = htmlspecialchars($_POST['phone']);
+    $service = htmlspecialchars($_POST['service']);
+    $message = htmlspecialchars($_POST['message']);
+
+    $to = "your-email@example.com"; // Change to your email
+    $subject = "New Contact Form Submission";
+
+    $body = "
+    You have received a new inquiry from your website:
+
+    Full Name: $name
+    Email: $email
+    Phone: $phone
+    Service Required: $service
+
+    Message:
+    $message
+    ";
+
+    $headers = "From: $email\r\n";
+    $headers .= "Reply-To: $email\r\n";
+
+    if (mail($to, $subject, $body, $headers)) {
+        echo "success";
+    } else {
+        echo "error";
+    }
+
+} else {
+    echo "Invalid request.";
+}
+?>
 </body>
 
 </html>
