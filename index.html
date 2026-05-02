@@ -2041,7 +2041,7 @@
     .toggle-track {
       position: absolute;
       inset: 0;
-      background: var(--bg-accent);
+      background: #fff;
       border: 1px solid var(--border-hover);
       border-radius: 100px;
       transition: background var(--transition);
@@ -2053,12 +2053,12 @@
       left: 3px;
       width: 16px;
       height: 16px;
-      background: var(--text-secondary);
+      background: #060812;
       border-radius: 50%;
       transition: transform var(--transition), background var(--transition);
     }
  
-    .toggle-switch input:checked ~ .toggle-track { background: var(--accent-dim); border-color: var(--accent-border); }
+    .toggle-switch input:checked ~ .toggle-track { background: #ffffff; border-color: var(--accent-border); }
     .toggle-switch input:checked ~ .toggle-thumb { transform: translateX(20px); background: var(--accent); }
  
     .save-badge {
@@ -2102,16 +2102,14 @@
       border-color: var(--border-hover);
       background: var(--bg-card-hover);
       transform: translateY(-4px);
-      border-radius: 30px;
     }
  
     .plan-card.popular {
       border-color: var(--accent-border);
       background: #101410;
-      border-radius: 30px;
     }
  
-    .plan-card.popular:hover { border-color: #ff4500; }
+    .plan-card.popular:hover { border-color: rgba(200,245,66,0.45); }
  
     /* popular glow */
     .plan-card.popular::before {
@@ -2466,7 +2464,7 @@
           WordPress, WooCommerce, Shopify, and Wix.</p>
         <div class="hero-cta reveal delay-3">
           <a href="#portfolio" class="btn-primary"><i class="fas fa-eye"></i> View Portfolio</a>
-         <!--   <a href="#contact" class="btn-secondary"><i class="fas fa-envelope"></i> Get a Free Quote</a>  -->
+          <a href="#contact" class="btn-secondary"><i class="fas fa-envelope"></i> Get a Free Quote</a>
         </div>
         <div class="hero-stats reveal delay-4">
           <div class="hero-stat">
@@ -2538,7 +2536,7 @@
         <p class="section-sub"><span class="grad-text">Save 40–60%</span> on costs with the same <span class="grad-text">high-quality</span> service, tailored for Australian businesses and supported by flexible time zones for seamless collaboration.</p>
         <div class="cta-actions">
           <a href="#contact" class="btn-primary"><i class="fas fa-paper-plane"></i> Start a Project</a>
-          <!--  <a href="tel:+919345479051" class="btn-secondary"><i class="fas fa-phone"></i> Call Me Now</a>  -->
+          <a href="tel:+919345479051" class="btn-secondary"><i class="fas fa-phone"></i> Call Me Now</a>
         </div>
       </div>
     </div>
@@ -3388,7 +3386,7 @@
           turn your vision into reality.</p>
         <div class="cta-actions">
           <a href="#contact" class="btn-primary"><i class="fas fa-paper-plane"></i> Start a Project</a>
-        <!--  <a href="tel:+919345479051" class="btn-secondary"><i class="fas fa-phone"></i> Call Me Now</a>-->
+          <a href="tel:+919345479051" class="btn-secondary"><i class="fas fa-phone"></i> Call Me Now</a>
         </div>
       </div>
     </div>
@@ -3406,7 +3404,7 @@
             <div class="contact-icon"><i class="fas fa-envelope"></i></div>
             <div>
               <div class="contact-item-label">Email</div>
-              <div class="contact-item-value">Suren@email.com</div>
+              <div class="contact-item-value"><a href="mailto:surentharsubramaniyan@gmail.com" style="color:inherit;">surentharsubramaniyan@gmail.com</a></div>
             </div>
           </div>
           <div class="contact-item">
@@ -3739,35 +3737,72 @@
     })();
 
     /* ===== CONTACT FORM ===== */
+    // EmailJS configuration — replace these with your own from https://www.emailjs.com/
+    const EMAILJS_SERVICE_ID  = 'YOUR_SERVICE_ID';   // e.g. 'service_abc123'
+    const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';  // e.g. 'template_xyz789'
+    const EMAILJS_PUBLIC_KEY  = 'YOUR_PUBLIC_KEY';   // e.g. 'AbCdEfGhIjK_lMnOp'
+
     document.getElementById('contactForm').addEventListener('submit', function (e) {
       e.preventDefault();
       let valid = true;
       const fields = [
-        { id: 'name', groupId: 'nameGroup', validate: v => v.trim().length > 1 },
-        { id: 'email', groupId: 'emailGroup', validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+        { id: 'name',    groupId: 'nameGroup',    validate: v => v.trim().length > 1 },
+        { id: 'email',   groupId: 'emailGroup',   validate: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
         { id: 'service', groupId: 'serviceGroup', validate: v => v !== '' },
-        { id: 'message', groupId: 'msgGroup', validate: v => v.trim().length > 5 },
+        { id: 'message', groupId: 'msgGroup',     validate: v => v.trim().length > 5 },
       ];
       fields.forEach(f => {
         const group = document.getElementById(f.groupId);
-        const val = document.getElementById(f.id).value;
+        const val   = document.getElementById(f.id).value;
         if (!f.validate(val)) { group.classList.add('error'); valid = false; }
         else group.classList.remove('error');
       });
       if (!valid) return;
+
       const btn = document.getElementById('submitBtn');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending…';
-      setTimeout(() => {
-        document.getElementById('formSuccess').style.display = 'block';
-        btn.style.display = 'none';
-        this.querySelectorAll('input, textarea, select').forEach(i => i.value = '');
-      }, 1600);
+
+      // Build the template parameters — these variable names must match
+      // the placeholders you create in your EmailJS email template.
+      const templateParams = {
+        from_name:    document.getElementById('name').value.trim(),
+        from_email:   document.getElementById('email').value.trim(),
+        phone:        document.getElementById('phone').value.trim() || 'N/A',
+        service:      document.getElementById('service').value,
+        message:      document.getElementById('message').value.trim(),
+        to_email:     'surentharsubramaniyan@gmail.com',
+      };
+
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams, EMAILJS_PUBLIC_KEY)
+        .then(() => {
+          document.getElementById('formSuccess').style.display = 'block';
+          btn.style.display = 'none';
+          this.querySelectorAll('input, textarea, select').forEach(i => i.value = '');
+        })
+        .catch(err => {
+          console.error('EmailJS error:', err);
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fas fa-paper-plane"></i> Send Message';
+          // Show a friendly error banner below the form
+          let errDiv = document.getElementById('formError');
+          if (!errDiv) {
+            errDiv = document.createElement('div');
+            errDiv.id = 'formError';
+            errDiv.style.cssText = 'margin-top:12px;padding:12px 16px;background:rgba(220,38,38,0.12);border:1px solid rgba(220,38,38,0.35);border-radius:10px;color:#f87171;font-size:.88rem;display:flex;align-items:center;gap:8px;';
+            errDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Oops! Something went wrong. Please try again or email me directly.';
+            document.getElementById('contactForm').appendChild(errDiv);
+          }
+          errDiv.style.display = 'flex';
+          setTimeout(() => { errDiv.style.display = 'none'; }, 6000);
+        });
     });
 
     /* ===== BACK TO TOP ===== */
     document.getElementById('backTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   </script>
+  <!-- EmailJS SDK (loads asynchronously, no backend needed) -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
   /* Billing toggle */
   const toggle = document.getElementById('billing-toggle');
@@ -3820,9 +3855,19 @@
   document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
 </script>
 
-  <!-- Elfsight WhatsApp Chat | Untitled WhatsApp Chat -->
-<script src="https://elfsightcdn.com/platform.js" async></script>
-<div class="elfsight-app-06bd3b8f-642e-47b5-afb0-6f23a719c352" data-elfsight-app-lazy></div>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69e4edaac1d9b41c31c92f05/1jmj40on3';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
 </body>
 
 </html>
